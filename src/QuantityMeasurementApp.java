@@ -36,9 +36,19 @@ public class QuantityMeasurementApp {
             return unit.toFeet(value);
         }
 
-        public static double convert(double value, LengthUnit from, LengthUnit to) {
-            double feet = from.toFeet(value);
-            return to.fromFeet(feet);
+        public QuantityLength add(QuantityLength other) {
+            if (other == null) throw new IllegalArgumentException();
+            double sumFeet = this.toFeet() + other.toFeet();
+            double result = this.unit.fromFeet(sumFeet);
+            return new QuantityLength(result, this.unit);
+        }
+
+        public static QuantityLength add(QuantityLength q1, QuantityLength q2, LengthUnit target) {
+            if (q1 == null || q2 == null || target == null)
+                throw new IllegalArgumentException();
+            double sumFeet = q1.toFeet() + q2.toFeet();
+            double result = target.fromFeet(sumFeet);
+            return new QuantityLength(result, target);
         }
 
         @Override
@@ -48,14 +58,18 @@ public class QuantityMeasurementApp {
             QuantityLength q = (QuantityLength) obj;
             return Double.compare(this.toFeet(), q.toFeet()) == 0;
         }
+
+        @Override
+        public String toString() {
+            return value + " " + unit;
+        }
     }
 
     public static void main(String[] args) {
-        System.out.println(QuantityLength.convert(1.0, LengthUnit.FEET, LengthUnit.INCHES));
-
         QuantityLength q1 = new QuantityLength(1.0, LengthUnit.FEET);
         QuantityLength q2 = new QuantityLength(12.0, LengthUnit.INCHES);
 
-        System.out.println(q1.equals(q2));
+        System.out.println(q1.add(q2));
+        System.out.println(QuantityLength.add(q1, q2, LengthUnit.INCHES));
     }
 }
